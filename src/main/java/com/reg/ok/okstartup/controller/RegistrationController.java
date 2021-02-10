@@ -50,8 +50,7 @@ public class RegistrationController {
 	
 	@RequestMapping(value = "/register", method = RequestMethod.POST)
 	public ResponseEntity<?> saveUser(@Valid @RequestBody UserJson user) throws Exception {
-		userDetailsService.save(user);
-		return ResponseEntity.ok("");
+		return ResponseEntity.ok(userDetailsService.save(user));
 	}
 	
 	@RequestMapping(value = "/authenticate", method = RequestMethod.POST)

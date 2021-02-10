@@ -25,13 +25,15 @@ public class RegisterGetInfoTest {
 	@Autowired
     private MockMvc mvc;
 	
-	private String username = "test2";
+	private String username = "test3";
 	private String password = "password123";
     
 	@Test
 	public void register_thenStatus200()
 	  throws Exception {
 
+		//set your register info
+		//username password
 		JSONObject json = new JSONObject();
         json.put("username", this.username);
         json.put("password", this.password);
@@ -54,7 +56,7 @@ public class RegisterGetInfoTest {
 	public void authenticateAndgetRegisterInfo() throws Exception {
 	    
 
-		//authenticate
+		//set username and password for authenticate
 	    JSONObject loginData = new JSONObject();
 	    loginData.put("username", this.username);
 	    loginData.put("password", this.password);
@@ -72,6 +74,7 @@ public class RegisterGetInfoTest {
 	    String token = jsonParser.parseMap(response).get("token").toString();
 	    
 	    
+	    //result expect when get register info
 	    JSONObject expectRegisterInfo = new JSONObject();
 	    expectRegisterInfo.put("firstname", "fname");
 	    expectRegisterInfo.put("lastname", "lname");
@@ -83,14 +86,14 @@ public class RegisterGetInfoTest {
 	    expectRegisterInfo.put("memberType", "Silver");
 	    
 	    //get info and pass access token to header
-	    result = mvc.perform(MockMvcRequestBuilders.post("/getUserInfo")
+	    mvc.perform(MockMvcRequestBuilders.post("/getUserInfo")
 					    	.accept("application/json;charset=UTF-8")
-					        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
+					        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)) //send token in with header
 					        .andExpect(MockMvcResultMatchers.status().isOk())
-					        .andExpect(MockMvcResultMatchers.content().json(expectRegisterInfo.toString())).andReturn();
+					        .andExpect(MockMvcResultMatchers.content().json(expectRegisterInfo.toString()));
 	    
-	    response = result.getResponse().getContentAsString();
-	    System.out.println(response);
+	   
+	    
 	    
 	}
 

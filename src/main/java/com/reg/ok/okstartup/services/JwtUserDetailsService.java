@@ -5,12 +5,13 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import com.reg.ok.okstartup.dto.UserJson;
 import com.reg.ok.okstartup.model.RegisterInfo;
@@ -45,8 +46,14 @@ public class JwtUserDetailsService implements UserDetailsService {
 		return userRepository.findByUsername(username);
 	}
 	
-	public RegisterInfo save(UserJson userJson) {
-		User user = new User();
+	public ResponseEntity<Object> save(UserJson userJson) {
+		//validate duplicate username
+		User user  = userRepository.findByUsername(userJson.getUsername());
+		if(user != null)
+			return new ResponseEntity<>("duplicate username", HttpStatus.PROCESSING);
+			//throw new DuplicateUserException("duplicate username " + userJson.getUsername());
+		
+		user = new User();
 		user.setUsername(userJson.getUsername());
 		user.setPassword(bcryptEncoder.encode(userJson.getPassword()));
 		userRepository.save(user);
@@ -79,7 +86,7 @@ public class JwtUserDetailsService implements UserDetailsService {
 			memberType = "Silver";
 		}
 		regisInfo.setMemberType(memberType);
-		return registerInfoRepository.save(regisInfo);
+		return new ResponseEntity<>("", HttpStatus.OK);
 		
 	}
 
